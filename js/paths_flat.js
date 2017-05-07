@@ -63,14 +63,6 @@ function update(data) {
     .attr("cy", function(d) { return yScale(d.latitude); })
     .merge(canvas);
 
-  d3.select("#opacity")
-  .on("click", function(d, i) {
-    darkrate.transition()
-    .duration(2000)
-    .delay(1000)
-    .style("opacity", document.getElementById("num").value)
-  });
-
   solar = canvas.enter().append("g").append("circle")
   .attr('fill', "orange")
   .attr('fill-opacity', .2)
@@ -90,9 +82,6 @@ function update(data) {
     solar.transition()
       .duration(2000)
       .delay(500)
-      .attr('fill', "orange")
-      .attr('fill-opacity', .2)
-      .attr("r", 1)
       .attr("cx", xScale(0))
       .attr("cy", yScale(0))
   })
@@ -113,8 +102,31 @@ function update(data) {
 
   })
 
-  d3.select("#corrd").on("click", function() {
-    console.log("GOT HERE");
+  // Opacity selection
+  d3.select("#opacity")
+  .on("click", function(d, i) {
+    darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .style("opacity", document.getElementById("num").value)
+
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .style("opacity", document.getElementById("num").value)
+  });
+
+  d3.select("#pointsize")
+    .on("click", function(d, i) {
+      darkrate.transition()
+      .duration(2000)
+      .delay(500)
+      .attr("r", document.getElementById("size").value)
+
+      solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr("r", document.getElementById("size").value)
   });
 
   //svg.selectAll("circle")
