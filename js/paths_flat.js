@@ -51,28 +51,81 @@ function update(data) {
   cScale.domain(d3.extent(data, function(d) { return d.dark; }));
 
   var canvas = svg.selectAll(".dot")
-  .data(data);
+    .data(data);
 
   canvas.attr("class", "update")
 
-  circles = canvas.enter().append("circle")
-  .attr('fill', function(d) { return cScale(d.dark); })
-  .attr('fill-opacity', .5)
-  .attr("r", 1.5)
-  .attr("cx", function(d) { return xScale(d.longitude); })
-  .attr("cy", function(d) { return yScale(d.latitude); });
+  darkrate = canvas.enter().append("g").append("circle")
+    .attr('fill', function(d) { return cScale(d.dark); })
+    .attr('fill-opacity', .5)
+    .attr("r", 1.5)
+    .attr("cx", function(d) { return xScale(d.longitude); })
+    .attr("cy", function(d) { return yScale(d.latitude); })
+    .merge(canvas);
 
   d3.select("#opacity")
   .on("click", function(d, i) {
-    circles.transition()
+    darkrate.transition()
     .duration(2000)
     .delay(1000)
     .style("opacity", document.getElementById("num").value)
   });
 
+  solar = canvas.enter().append("g").append("circle")
+  .attr('fill', "orange")
+  .attr('fill-opacity', .2)
+  .attr("r", 1)
+  .attr("cx", function(d) { return xScale(d.sun_lon); })
+  .attr("cy", function(d) { return yScale(d.sun_lat); })
+  .merge(canvas);
+
+  // click to sub-solar coordinates
+  d3.select("#relative").on("click", function() {
+    darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("cx", function (d) {return xScale(rescale(d))})
+    .attr("cy", function (d) {return yScale(d.latitude - d.sun_lat)});
+
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('fill', "orange")
+      .attr('fill-opacity', .2)
+      .attr("r", 1)
+      .attr("cx", xScale(0))
+      .attr("cy", yScale(0))
+  })
+
+  // click to default coordinates
+  d3.select("#native").on("click", function() {
+    darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("cx", function(d) { return xScale(d.longitude); })
+    .attr("cy", function(d) { return yScale(d.latitude); })
+
+  solar.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("cx", function(d) { return xScale(d.sun_lon); })
+    .attr("cy", function(d) { return yScale(d.sun_lat); })
+
+  })
+
+  d3.select("#corrd").on("click", function() {
+    console.log("GOT HERE");
+  });
+
+  //svg.selectAll("circle")
+  //.data(data)
+  //.on("mouseover", mouseover)
+  //.on("mouseout", mouseout);
+
   canvas.exit().remove();
 }
 
+// Load the world.
 d3.json("https://unpkg.com/world-atlas@1/world/50m.json", function(error, world) {
   if (error) throw error;
 
@@ -87,6 +140,8 @@ d3.json("https://unpkg.com/world-atlas@1/world/50m.json", function(error, world)
   .attr("d", path);
 });
 
+
+// Load the orbital info stuff
 d3.json("./js/orbital_info.json", function(error, data) {
   if (error) throw error;
 
@@ -96,8 +151,46 @@ d3.json("./js/orbital_info.json", function(error, data) {
     d.longitude = d.longitude > 180 ? +d.longitude - 360 : +d.longitude;
     d.latitude = +d.latitude;
 
+    d.sun_lon = d.sun_lon > 180 ? +d.sun_lon - 360 : +d.sun_lon
+    d.sun_lat = +d.sun_lat;
   });
 
 update(data);
 
 });
+
+
+function rescale(d) {
+  outLat = d.longitude - d.sun_lon > 180 ? (d.longitude - d.sun_lon) - 360 : d.longitude - d.sun_lon;
+  outLat = outLat < -180 ? outLat + 360 : outLat
+  outLat = outLat > 180 ? outLat - 360 : outLat
+  return outLat
+}
+
+
+
+
+
+
+// Interactivity
+function mouseover(d, i) {
+  //console.log(d);
+  //console.log(i);
+  var c = d3.select(this);
+  console.log(c);
+
+  //d3.select("#stats").enter().text(d.latitude + "   " + d.longitude);
+
+  //c.attr({"fill": "orange"});
+  //d3.select(this).attr({fill: "orange"});
+
+  console.log(d.longitude + "     " + i);
+};
+
+function mouseout(d, i) {
+  d3.select(this).attr({
+    fill: "black",
+  });
+
+  d3.select("#stamp" + i).remove();
+}
