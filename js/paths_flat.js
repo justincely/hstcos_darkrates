@@ -18,6 +18,7 @@ var cScale = d3.scaleLinear()
 //    .attr("height", height);
 
 var svg = d3.select("#canvas")
+var scattersvg = d3.select("#scatter")
 
 var projection = d3.geoMercator()
 .scale((width - 3) / (2 * Math.PI))
@@ -51,17 +52,17 @@ function update(data) {
   cScale.domain(d3.extent(data, function(d) { return d.dark; }));
 
   var canvas = svg.selectAll(".dot")
-    .data(data);
+  .data(data);
 
   canvas.attr("class", "update")
 
   darkrate = canvas.enter().append("g").append("circle")
-    .attr('fill', function(d) { return cScale(d.dark); })
-    .attr('fill-opacity', .5)
-    .attr("r", 1.5)
-    .attr("cx", function(d) { return xScale(d.longitude); })
-    .attr("cy", function(d) { return yScale(d.latitude); })
-    .merge(canvas);
+  .attr('fill', function(d) { return cScale(d.dark); })
+  .attr('fill-opacity', .5)
+  .attr("r", 1.5)
+  .attr("cx", function(d) { return xScale(d.longitude); })
+  .attr("cy", function(d) { return yScale(d.latitude); })
+  .merge(canvas);
 
   solar = canvas.enter().append("g").append("circle")
   .attr('fill', "orange")
@@ -80,10 +81,10 @@ function update(data) {
     .attr("cy", function (d) {return yScale(d.latitude - d.sun_lat)});
 
     solar.transition()
-      .duration(2000)
-      .delay(500)
-      .attr("cx", xScale(0))
-      .attr("cy", yScale(0))
+    .duration(2000)
+    .delay(500)
+    .attr("cx", xScale(0))
+    .attr("cy", yScale(0))
   })
 
   // click to default coordinates
@@ -94,7 +95,7 @@ function update(data) {
     .attr("cx", function(d) { return xScale(d.longitude); })
     .attr("cy", function(d) { return yScale(d.latitude); })
 
-  solar.transition()
+    solar.transition()
     .duration(2000)
     .delay(500)
     .attr("cx", function(d) { return xScale(d.sun_lon); })
@@ -111,23 +112,55 @@ function update(data) {
     .style("opacity", document.getElementById("num").value)
 
     solar.transition()
-      .duration(2000)
-      .delay(500)
-      .style("opacity", document.getElementById("num").value)
+    .duration(2000)
+    .delay(500)
+    .style("opacity", document.getElementById("num").value)
   });
 
+  // Change size of the points
   d3.select("#pointsize")
-    .on("click", function(d, i) {
-      darkrate.transition()
-      .duration(2000)
-      .delay(500)
-      .attr("r", document.getElementById("size").value)
+  .on("click", function(d, i) {
+    darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("r", document.getElementById("size").value)
 
-      solar.transition()
-      .duration(2000)
-      .delay(500)
-      .attr("r", document.getElementById("size").value)
+    solar.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("r", document.getElementById("size").value)
   });
+
+  // Filter out data
+  d3.select("#NUV").on("click", function() {
+    item = d3.selectAll("circle")
+
+    item.forEach(function (d, i) {
+      console.log(d);
+    })
+  })
+
+  // Filter out data
+  d3.select("#FUVA").on("click", function(d, i) {
+    darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .style("opacity", function(d, i) {
+      return 0 ? d.detector != "FUVA" : document.getElementById("num").value
+    });
+  })
+
+  // Filter out data
+  d3.select("#FUVB").on("click", function(d, i) {
+    darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .style("opacity", function(d, i) {
+      return 0 ? d.detector != "FUVB" : document.getElementById("num").value
+    });
+  })
+
+
 
   //svg.selectAll("circle")
   //.data(data)
@@ -158,7 +191,7 @@ d3.json("./js/orbital_info.json", function(error, data) {
   if (error) throw error;
 
   // Filter/modify data if necessary
-  data.forEach(function(d) {
+  data.forEach( function (d) {
     //Re-center around the map
     d.longitude = d.longitude > 180 ? +d.longitude - 360 : +d.longitude;
     d.latitude = +d.latitude;
@@ -167,7 +200,7 @@ d3.json("./js/orbital_info.json", function(error, data) {
     d.sun_lat = +d.sun_lat;
   });
 
-update(data);
+  update(data);
 
 });
 
