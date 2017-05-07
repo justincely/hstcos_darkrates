@@ -79,6 +79,7 @@ function update(data) {
   solar = canvas.enter().append("g").append("circle")
     .attr('fill', "orange")
     .attr('fill-opacity', .2)
+    .attr("stroke", "black")
     .attr("r", 1)
     .attr("cx", function(d) {
       return xScale(d.sun_lon);
@@ -132,40 +133,61 @@ function update(data) {
   })
 
   // Opacity selection
-  d3.select("#opacity")
-    .on("click", function(d, i) {
+  d3.select("#opacity").on("input", function(d, i) {
+
+      d3.select("#opacity-value").text(this.value);
+
       darkrate.transition()
         .duration(2000)
         .delay(500)
-        .style("opacity", document.getElementById("num").value)
+        .style("opacity", +this.value)
+    });
+
+  // Opacity selection
+  d3.select("#solOpacity").on("input", function(d, i) {
+
+      d3.select("#sol-opacity-value").text(this.value);
 
       solar.transition()
         .duration(2000)
         .delay(500)
-        .style("opacity", document.getElementById("num").value)
+        .style("opacity", +this.value)
+    });
+
+
+  // Change size of the points
+  d3.select("#pointsize").on("input", function(d, i) {
+
+      d3.select("#pointsize-value").text(this.value);
+
+      darkrate.transition()
+        .duration(2000)
+        .delay(500)
+        .attr("r", +this.value)
     });
 
   // Change size of the points
-  d3.select("#pointsize")
-    .on("click", function(d, i) {
-      darkrate.transition()
-        .duration(2000)
-        .delay(500)
-        .attr("r", document.getElementById("size").value)
+  d3.select("#solPointsize").on("input", function(d, i) {
+
+      d3.select("#sol-pointsize-value").text(this.value);
 
       solar.transition()
         .duration(2000)
         .delay(500)
-        .attr("r", document.getElementById("size").value)
+        .attr("r", +this.value)
     });
 
   // Filter out data
-  d3.select("#NUV").on("click", function() {
-    item = d3.selectAll("circle")
-
-    item.forEach(function(d, i) {
-      console.log(d);
-    })
+  d3.select("#NUV").on("click", function(d, i) {
+    darkrate.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('r', function(d, i) {
+        if (d.detector == "NUV") {
+          return +document.getElementById("pointsize").value;
+        }
+        return 0
+      });
   })
 
   // Filter out data
@@ -173,8 +195,11 @@ function update(data) {
     darkrate.transition()
       .duration(2000)
       .delay(500)
-      .style("opacity", function(d, i) {
-        return 0 ? d.detector != "FUVA" : document.getElementById("num").value
+      .attr('r', function(d, i) {
+        if (d.detector == "FUVA") {
+          return +document.getElementById("pointsize").value;
+        }
+        return 0
       });
   })
 
@@ -183,17 +208,21 @@ function update(data) {
     darkrate.transition()
       .duration(2000)
       .delay(500)
-      .style("opacity", function(d, i) {
-        return 0 ? d.detector != "FUVB" : document.getElementById("num").value
+      .attr('r', function(d, i) {
+        if (d.detector == "FUVB") {
+          return +document.getElementById("pointsize").value;
+        }
+        return 0
       });
-  })
+});
 
-
-
-  //svg.selectAll("circle")
-  //.data(data)
-  //.on("mouseover", mouseover)
-  //.on("mouseout", mouseout);
+// Filter out data
+d3.select("#ALL").on("click", function(d, i) {
+  darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr('r', +document.getElementById("pointsize").value);
+});
 
   canvas.exit().remove();
 }
@@ -243,14 +272,10 @@ function rescale(d) {
 }
 
 
-
-
-
-
 // Interactivity
 function mouseover(d, i) {
   box = document.getElementById("stats");
-  message = "Lat: " + d.latitude.toFixed(3) + "\n" + "lon: " + d.longitude.toFixed(3) + "\n" + "dark: " + d.dark.toExponential(2);
+  message = "Lat: " + d.latitude.toFixed(3) + "\n" + "Lon: " + d.longitude.toFixed(3) + "\n" + "Dark: " + d.dark.toExponential(2);
   box.value = message;
 
 };

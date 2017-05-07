@@ -70,15 +70,11 @@
         <div class="col-lg-3">
           <center>
           <div class="btn-group-vertical">
+            <button type="button" class="btn btn-primary" id="ALL">ALL</button>
             <button type="button" class="btn btn-primary" id="NUV">NUV</button>
             <button type="button" class="btn btn-primary" id="FUVA">FUV A</button>
             <button type="button" class="btn btn-primary" id="FUVB">FUV B</button>
           </div>
-        </center>
-        </div>
-
-        <div class="col-lg-3">
-          <center>
           <div class="btn-group-vertical">
             <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Display native lat/long coordinates." id="native">
               Lat/Long Coordinates
@@ -92,11 +88,61 @@
 
         <div class="col-lg-3">
           <center>
-          <button id="opacity">Circle Opacity</button>
-          <input id="num" value=.5></input>
 
-          <button id="pointsize">Circle Size</button>
-          <input id="size" value=2></input>
+            <label for="time-min"
+              style="display: inline-block; width: 240px; text-align: left">
+                Time Minimum = <span id="time-min-value">…</span>
+            </label>
+            <input id="time-min" type="range"  min="2009.0" max="2018.0" step=".05" value="2009.0" />
+
+            <label for="time-max"
+              style="display: inline-block; width: 240px; text-align: left">
+                Time Maximum = <span id="time-max-value">…</span>
+            </label>
+            <input id="time-max" type="range"  min="2009.0" max="2018.0" step=".05" value="2018.0" />
+
+            <label for="dark-min"
+              style="display: inline-block; width: 240px; text-align: left">
+                Darkrate Minimum = <span id="darkrate-min-value">…</span>
+            </label>
+            <input id="dark-min" type="range"  min="0" max=".001" step=".00005" value=".001" />
+
+            <label for="dark-max"
+              style="display: inline-block; width: 240px; text-align: left">
+                Darkrate Maximum = <span id="darkrate-max-value">…</span>
+            </label>
+            <input id="dark-max" type="range"  min="1" max="15" step=".5" value="5" />
+
+
+        </center>
+        </div>
+
+        <div class="col-lg-3">
+          <center>
+
+          <label for="opacity"
+            style="display: inline-block; width: 240px; text-align: left">
+              Opacity = <span id="opacity-value">…</span>
+          </label>
+          <input id="opacity" type="range"  min="0" max="1" step=".05" value=".8" />
+
+          <label for="pointsize"
+            style="display: inline-block; width: 240px; text-align: left">
+              Point Size = <span id="pointsize-value">…</span>
+          </label>
+          <input id="pointsize" type="range"  min="1" max="15" step=".5" value="5" />
+
+          <label for="solOpacity"
+            style="display: inline-block; width: 240px; text-align: left">
+              Solar Opacity = <span id="sol-opacity-value">…</span>
+          </label>
+          <input id="solOpacity" type="range"  min="0" max="1" step=".05" value=".8" />
+
+          <label for="solPointsize"
+            style="display: inline-block; width: 240px; text-align: left">
+              Solar Point Size = <span id="sol-pointsize-value">…</span>
+          </label>
+          <input id="solPointsize" type="range"  min="1" max="15" step=".5" value="5" />
 
         </center>
         </div>
