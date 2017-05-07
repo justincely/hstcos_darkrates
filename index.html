@@ -33,7 +33,7 @@
   <script src="js/jquery.js"></script>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
-  
+
   <script src="https://unpkg.com/topojson-client@3"></script>
   <script src="https://d3js.org/queue.v1.min.js"></script>
   <script src="https://unpkg.com/topojson@3.0.0"></script>
@@ -61,34 +61,61 @@
       <div class="box">
         <div class="col-lg-12">
           <hr>
-          <h2 class="intro-text text-center">Dark
-            <strong>Rates</strong>
+          <h2 class="intro-text text-center">Tool
+            <strong>Bar</strong>
           </h2>
           <hr>
         </div>
-        <div class="col-lg-12">
 
+        <div class="col-lg-3">
+          <center>
           <div class="btn-group-vertical">
             <button type="button" class="btn btn-primary" id="NUV">NUV</button>
             <button type="button" class="btn btn-primary" id="FUVA">FUV A</button>
             <button type="button" class="btn btn-primary" id="FUVB">FUV B</button>
           </div>
+        </center>
+        </div>
 
+        <div class="col-lg-3">
+          <center>
           <div class="btn-group-vertical">
-            <button type="button" class="btn btn-primary" id="native">Native</button>
-            <button type="button" class="btn btn-primary" id="relative">Relative</button>
+            <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Display native lat/long coordinates." id="native">
+              Lat/Long Coordinates
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Display coordinates relative to solar position." id="relative">
+              Relative
+            </button>
           </div>
+        </center>
+        </div>
 
+        <div class="col-lg-3">
+          <center>
           <button id="opacity">Circle Opacity</button>
           <input id="num" value=.5></input>
 
           <button id="pointsize">Circle Size</button>
           <input id="size" value=2></input>
 
+        </center>
+        </div>
+
+        <div class="col-lg-3">
+        </center>
+          <p>STATS</p>
+          <textarea id="stats" rows="3" cols="16"></textarea>
+        </center>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="box">
 
           <div class="col-lg-12">
             <center>
-              <svg width="960" height="960" id="canvas"></svg>
+              <svg width="960" height="960" id="map"></svg>
             </center>
           </div>
 

@@ -10,14 +10,14 @@ var yScale = d3.scaleLinear()
   .range([height, 0]);
 
 var cScale = d3.scaleLinear()
-  .domain([0, .0008])
+  .domain([0, 5e-6])
   .range(['blue', 'red'])
 
 //var svg = d3.select("body").select("div").append("svg")
 //    .attr("width", width)
 //    .attr("height", height);
 
-var svg = d3.select("#canvas")
+var svg = d3.select("#map")
 var scattersvg = d3.select("#scatter")
 
 var projection = d3.geoMercator()
@@ -51,9 +51,9 @@ svg.append("path")
 
 function update(data) {
   // Scale the range of the data
-  cScale.domain(d3.extent(data, function(d) {
-    return d.dark;
-  }));
+  //cScale.domain(d3.extent(data, function(d) {
+  //  return d.dark;
+  //}));
 
   var canvas = svg.selectAll(".dot")
     .data(data);
@@ -72,6 +72,8 @@ function update(data) {
     .attr("cy", function(d) {
       return yScale(d.latitude);
     })
+    .on("mouseover", mouseover)
+    .on("mouseoff", mouseoff)
     .merge(canvas);
 
   solar = canvas.enter().append("g").append("circle")
@@ -247,20 +249,13 @@ function rescale(d) {
 
 // Interactivity
 function mouseover(d, i) {
-  //console.log(d);
-  //console.log(i);
-  var c = d3.select(this);
-  console.log(c);
+  box = document.getElementById("stats");
+  message = "Lat: " + d.latitude.toFixed(3) + "\n" + "lon: " + d.longitude.toFixed(3) + "\n" + "dark: " + d.dark.toExponential(2);
+  box.value = message;
 
-  //d3.select("#stats").enter().text(d.latitude + "   " + d.longitude);
-
-  //c.attr({"fill": "orange"});
-  //d3.select(this).attr({fill: "orange"});
-
-  console.log(d.longitude + "     " + i);
 };
 
-function mouseout(d, i) {
+function mouseoff(d, i) {
   d3.select(this).attr({
     fill: "black",
   });
