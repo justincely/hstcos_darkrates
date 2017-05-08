@@ -11,7 +11,7 @@ var yScale = d3.scaleLinear()
 
 var cScale = d3.scaleLinear()
   .domain([0, 5e-6])
-  .range(['blue', 'red'])
+  .range(['cyan', 'darkred'])
 
 //var svg = d3.select("body").select("div").append("svg")
 //    .attr("width", width)
@@ -49,13 +49,24 @@ svg.append("path")
   .attr("class", "graticule")
   .attr("d", path);
 
+d3.select("#time-min-value").text(document.getElementById("time-min").value)
+d3.select("#time-max-value").text(document.getElementById("time-max").value)
+d3.select("#darkrate-min-value").text(document.getElementById("dark-min").value)
+d3.select("#darkrate-max-value").text(document.getElementById("dark-max").value)
+
+d3.select("#opacity-value").text(document.getElementById("opacity").value)
+d3.select("#pointsize-value").text(document.getElementById("pointsize").value)
+d3.select("#sol-opacity-value").text(document.getElementById("solOpacity").value)
+d3.select("#sol-pointsize-value").text(document.getElementById("solPointsize").value)
+
+
 function update(data) {
   // Scale the range of the data
   //cScale.domain(d3.extent(data, function(d) {
   //  return d.dark;
   //}));
 
-  var canvas = svg.selectAll(".dot")
+  var canvas = svg.selectAll("circle")
     .data(data);
 
   canvas.attr("class", "update")
@@ -64,8 +75,8 @@ function update(data) {
     .attr('fill', function(d) {
       return cScale(d.dark);
     })
-    .attr('fill-opacity', .5)
-    .attr("r", 1.5)
+    .attr('fill-opacity', +document.getElementById("opacity").value)
+    .attr("r", +document.getElementById("pointsize").value)
     .attr("cx", function(d) {
       return xScale(d.longitude);
     })
@@ -78,9 +89,9 @@ function update(data) {
 
   solar = canvas.enter().append("g").append("circle")
     .attr('fill', "orange")
-    .attr('fill-opacity', .2)
+    .attr('fill-opacity', +document.getElementById("solOpacity").value)
     .attr("stroke", "black")
-    .attr("r", 1)
+    .attr("r", +document.getElementById("solPointsize").value)
     .attr("cx", function(d) {
       return xScale(d.sun_lon);
     })
@@ -89,134 +100,117 @@ function update(data) {
     })
     .merge(canvas);
 
-  // click to sub-solar coordinates
-  d3.select("#relative").on("click", function() {
+  d3.select("#time-min").on("input", function(d, i) {
+    newVal = +this.value;
+    d3.select("#time-min-value").text(newVal);
+
     darkrate.transition()
       .duration(2000)
       .delay(500)
-      .attr("cx", function(d) {
-        return xScale(rescale(d))
-      })
-      .attr("cy", function(d) {
-        return yScale(d.latitude - d.sun_lat)
+      .attr('r', function(d, i) {
+        if (+d.date <= newVal) {
+          return 0;
+        }
+        return +document.getElementById("pointsize").value;
       });
+  });
 
-    solar.transition()
-      .duration(2000)
-      .delay(500)
-      .attr("cx", xScale(0))
-      .attr("cy", yScale(0))
-  })
+  d3.select("#time-max").on("input", function(d, i) {
+    newVal = +this.value;
+    d3.select("#time-max-value").text(newVal);
 
-  // click to default coordinates
-  d3.select("#native").on("click", function() {
     darkrate.transition()
       .duration(2000)
       .delay(500)
-      .attr("cx", function(d) {
-        return xScale(d.longitude);
-      })
-      .attr("cy", function(d) {
-        return yScale(d.latitude);
-      })
+      .attr('r', function(d, i) {
+        if (+d.date >= newVal) {
+          return 0;
+        }
+        return +document.getElementById("pointsize").value;
+      });
+  });
 
-    solar.transition()
+  d3.select("#dark-min").on("input", function(d, i) {
+    newVal = +this.value;
+    d3.select("#darkrate-min-value").text(newVal);
+
+    darkrate.transition()
       .duration(2000)
       .delay(500)
-      .attr("cx", function(d) {
-        return xScale(d.sun_lon);
-      })
-      .attr("cy", function(d) {
-        return yScale(d.sun_lat);
-      })
+      .attr('r', function(d, i) {
+        if (+d.dark <= newVal) {
+          return 0;
+        }
+        return +document.getElementById("pointsize").value;
+      });
+  });
 
-  })
+  d3.select("#dark-max").on("input", function(d, i) {
+    newVal = +this.value;
+    d3.select("#darkrate-max-value").text(newVal);
+
+    darkrate.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('r', function(d, i) {
+        point = d3.select(this)
+        if (+d.dark >= newVal) {
+          return 0;
+        }
+        return +document.getElementById("pointsize").value;
+      });
+  });
+
 
   // Opacity selection
   d3.select("#opacity").on("input", function(d, i) {
 
-      d3.select("#opacity-value").text(this.value);
+    d3.select("#opacity-value").text(this.value);
 
-      darkrate.transition()
-        .duration(2000)
-        .delay(500)
-        .style("opacity", +this.value)
-    });
+    darkrate.transition()
+      .duration(2000)
+      .delay(500)
+      .style("opacity", +this.value)
+  });
 
   // Opacity selection
   d3.select("#solOpacity").on("input", function(d, i) {
 
-      d3.select("#sol-opacity-value").text(this.value);
+    d3.select("#sol-opacity-value").text(this.value);
 
-      solar.transition()
-        .duration(2000)
-        .delay(500)
-        .style("opacity", +this.value)
-    });
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .style("opacity", +this.value)
+  });
 
 
   // Change size of the points
   d3.select("#pointsize").on("input", function(d, i) {
 
-      d3.select("#pointsize-value").text(this.value);
+    d3.select("#pointsize-value").text(this.value);
 
-      darkrate.transition()
-        .duration(2000)
-        .delay(500)
-        .attr("r", +this.value)
-    });
+    darkrate.transition()
+      .duration(2000)
+      .delay(500)
+      .attr("r", +this.value)
+  });
 
   // Change size of the points
   d3.select("#solPointsize").on("input", function(d, i) {
 
-      d3.select("#sol-pointsize-value").text(this.value);
+    d3.select("#sol-pointsize-value").text(this.value);
 
-      solar.transition()
-        .duration(2000)
-        .delay(500)
-        .attr("r", +this.value)
-    });
-
-  // Filter out data
-  d3.select("#NUV").on("click", function(d, i) {
-    darkrate.transition()
+    solar.transition()
       .duration(2000)
       .delay(500)
-      .attr('r', function(d, i) {
-        if (d.detector == "NUV") {
-          return +document.getElementById("pointsize").value;
-        }
-        return 0
-      });
-  })
+      .attr("r", +this.value)
+  });
 
-  // Filter out data
-  d3.select("#FUVA").on("click", function(d, i) {
-    darkrate.transition()
-      .duration(2000)
-      .delay(500)
-      .attr('r', function(d, i) {
-        if (d.detector == "FUVA") {
-          return +document.getElementById("pointsize").value;
-        }
-        return 0
-      });
-  })
+  canvas.exit().remove();
+}
 
-  // Filter out data
-  d3.select("#FUVB").on("click", function(d, i) {
-    darkrate.transition()
-      .duration(2000)
-      .delay(500)
-      .attr('r', function(d, i) {
-        if (d.detector == "FUVB") {
-          return +document.getElementById("pointsize").value;
-        }
-        return 0
-      });
-});
-
-// Filter out data
+// Turn on all data
 d3.select("#ALL").on("click", function(d, i) {
   darkrate.transition()
     .duration(2000)
@@ -224,8 +218,88 @@ d3.select("#ALL").on("click", function(d, i) {
     .attr('r', +document.getElementById("pointsize").value);
 });
 
-  canvas.exit().remove();
-}
+// Select only NUV data.
+d3.select("#NUV").on("click", function(d, i) {
+  darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr('r', function(d, i) {
+      if (d.detector == "NUV") {
+        return +document.getElementById("pointsize").value;
+      }
+      return 0
+    });
+})
+
+// Select oinly FUVA data.
+d3.select("#FUVA").on("click", function(d, i) {
+  darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr('r', function(d, i) {
+      if (d.detector == "FUVA") {
+        return +document.getElementById("pointsize").value;
+      }
+      return 0
+    });
+})
+
+// Sekect only FUVB data.
+d3.select("#FUVB").on("click", function(d, i) {
+  darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr('r', function(d, i) {
+      if (d.detector == "FUVB") {
+        return +document.getElementById("pointsize").value;
+      }
+      return 0
+    });
+});
+
+// click to sub-solar coordinates
+d3.select("#relative").on("click", function() {
+  darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("cx", function(d) {
+      return xScale(rescale(d))
+    })
+    .attr("cy", function(d) {
+      return yScale(d.latitude - d.sun_lat)
+    });
+
+  solar.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("cx", xScale(0))
+    .attr("cy", yScale(0))
+})
+
+// click to default coordinates
+d3.select("#native").on("click", function() {
+  darkrate.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("cx", function(d) {
+      return xScale(d.longitude);
+    })
+    .attr("cy", function(d) {
+      return yScale(d.latitude);
+    })
+
+  solar.transition()
+    .duration(2000)
+    .delay(500)
+    .attr("cx", function(d) {
+      return xScale(d.sun_lon);
+    })
+    .attr("cy", function(d) {
+      return yScale(d.sun_lat);
+    })
+
+})
+
 
 // Load the world.
 d3.json("https://unpkg.com/world-atlas@1/world/50m.json", function(error, world) {
