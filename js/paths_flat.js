@@ -390,8 +390,6 @@ function update(data) {
 
 
 
-
-
 // Load the world.
 d3.json("https://unpkg.com/world-atlas@1/world/50m.json", function(error, world) {
   if (error) throw error;
@@ -444,7 +442,7 @@ function rescale(d) {
 // Interactivity
 function mouseover(d, i) {
   box = document.getElementById("stats");
-  message = "Lat: " + d.latitude.toFixed(3) + "\n" + "Lon: " + d.longitude.toFixed(3) + "\n" + "Dark: " + d.dark.toExponential(2) + "Fsol: " + d.fsol.toFixed(3);
+  message = "Lat: " + d.latitude.toFixed(3) + "\n" + "Lon: " + d.longitude.toFixed(3) + "\n" + "Dark: " + d.dark.toExponential(2) + "\nFsol: " + d.fsol.toFixed(3);
   box.value = message;
 
 };
