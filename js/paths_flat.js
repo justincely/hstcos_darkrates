@@ -1,5 +1,8 @@
-var width = 960;
-var height = 960;
+var height = 960
+var width = 960
+//var margin = {top: 10, right: 10, bottom: 10, left: 10},
+//    width = 980 - margin.left - margin.right,
+//    height = 980 - margin.top - margin.bottom;
 
 var xScale = d3.scaleLinear()
   .domain([-180, 180])
@@ -10,7 +13,7 @@ var yScale = d3.scaleLinear()
   .range([height, 0]);
 
 var cScale = d3.scaleLinear()
-  .domain([0, 5e-6])
+  .domain([1e-6, 4e-6])
   .range(['cyan', 'darkred'])
 
 //var svg = d3.select("body").select("div").append("svg")
@@ -99,33 +102,160 @@ function update(data) {
     })
     .merge(canvas);
 
+    // Select only specific detector data.
+    d3.select("#detector").on("input", function(d, i) {
+
+      console.log("here");
+      newDetector = document.getElementById("detector").value;
+      pointsize = +document.getElementById("pointsize").value;
+
+      darkrate.transition()
+        .duration(2000)
+        .delay(500)
+        .attr('r', function(d, i) {
+          if (newDetector == "BOTH") {
+            return pointsize;
+          } else if (d.detector == newDetector) {
+            return pointsize;
+          }
+          return 0
+        });
+
+      solar.transition()
+        .duration(2000)
+        .delay(500)
+        .attr('r', function(d, i) {
+          if (newDetector == "BOTH") {
+            return pointsize;
+          } else if (d.detector == newDetector) {
+            return pointsize;
+          }
+          return 0
+        });
+    })
+
+    // click to sub-solar coordinates
+    d3.select("#relative").on("click", function() {
+      darkrate.transition()
+        .duration(2000)
+        .delay(500)
+        .attr("cx", function(d) {
+          return xScale(rescale(d))
+        })
+        .attr("cy", function(d) {
+          return yScale(d.latitude - d.sun_lat)
+        });
+
+      solar.transition()
+        .duration(2000)
+        .delay(500)
+        .attr("cx", xScale(0))
+        .attr("cy", yScale(0))
+    })
+
+    // click to default coordinates
+    d3.select("#native").on("click", function() {
+      darkrate.transition()
+        .duration(2000)
+        .delay(500)
+        .attr("cx", function(d) {
+          return xScale(d.longitude);
+        })
+        .attr("cy", function(d) {
+          return yScale(d.latitude);
+        })
+
+      solar.transition()
+        .duration(2000)
+        .delay(500)
+        .attr("cx", function(d) {
+          return xScale(d.sun_lon);
+        })
+        .attr("cy", function(d) {
+          return yScale(d.sun_lat);
+        })
+
+    })
+
   d3.select("#time-min").on("input", function(d, i) {
     newVal = +this.value;
     d3.select("#time-min-value").text(newVal);
+
+    minTime = document.getElementById("time-min").value;
+    maxTime = document.getElementById("time-max").value;
+    minDark = +document.getElementById("dark-min").value;
+    maxDark = +document.getElementById("dark-max").value;
+    newDetector = document.getElementById("detector").value;
+    pointsize = +document.getElementById("pointsize").value;
 
     darkrate.transition()
       .duration(2000)
       .delay(500)
       .attr('r', function(d, i) {
-        if (+d.date <= newVal) {
+        if ((minTime >= +d.date) || (+d.date >= maxTime) || (minDark >= +d.dark) || (+d.dark >= maxDark)) {
+          return 0;
+        } else if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (newDetector != d.detector) {
           return 0;
         }
-        return +document.getElementById("pointsize").value;
+        return pointsize;
       });
+
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('r', function(d, i) {
+        if ((minTime >= +d.date) || (+d.date >= maxTime) || (minDark >= +d.dark) || (+d.dark >= maxDark)) {
+          return 0;
+        } else if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (newDetector != d.detector) {
+          return 0;
+        }
+        return pointsize;
+      });
+
+
   });
 
   d3.select("#time-max").on("input", function(d, i) {
     newVal = +this.value;
     d3.select("#time-max-value").text(newVal);
 
+    minTime = document.getElementById("time-min").value;
+    maxTime = document.getElementById("time-max").value;
+    minDark = +document.getElementById("dark-min").value;
+    maxDark = +document.getElementById("dark-max").value;
+    newDetector = document.getElementById("detector").value;
+    pointsize = +document.getElementById("pointsize").value;
+
     darkrate.transition()
       .duration(2000)
       .delay(500)
       .attr('r', function(d, i) {
-        if (+d.date >= newVal) {
+        if ((minTime >= +d.date) || (+d.date >= maxTime) || (minDark >= +d.dark) || (+d.dark >= maxDark)) {
+          return 0;
+        } else if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (newDetector != d.detector) {
           return 0;
         }
-        return +document.getElementById("pointsize").value;
+        return pointsize;
+      });
+
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('r', function(d, i) {
+        if ((minTime >= +d.date) || (+d.date >= maxTime) || (minDark >= +d.dark) || (+d.dark >= maxDark)) {
+          return 0;
+        } else if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (newDetector != d.detector) {
+          return 0;
+        }
+        return pointsize;
       });
   });
 
@@ -133,14 +263,39 @@ function update(data) {
     newVal = +this.value;
     d3.select("#darkrate-min-value").text(newVal);
 
+    minTime = document.getElementById("time-min").value;
+    maxTime = document.getElementById("time-max").value;
+    minDark = +document.getElementById("dark-min").value;
+    maxDark = +document.getElementById("dark-max").value;
+    newDetector = document.getElementById("detector").value;
+    pointsize = +document.getElementById("pointsize").value;
+
     darkrate.transition()
       .duration(2000)
       .delay(500)
       .attr('r', function(d, i) {
-        if (+d.dark <= newVal) {
+        if ((minTime >= +d.date) || (+d.date >= maxTime) || (minDark >= +d.dark) || (+d.dark >= maxDark)) {
+          return 0;
+        } else if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (newDetector != d.detector) {
           return 0;
         }
-        return +document.getElementById("pointsize").value;
+        return pointsize;
+      });
+
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('r', function(d, i) {
+        if ((minTime >= +d.date) || (+d.date >= maxTime) || (minDark >= +d.dark) || (+d.dark >= maxDark)) {
+          return 0;
+        } else if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (newDetector != d.detector) {
+          return 0;
+        }
+        return pointsize;
       });
   });
 
@@ -148,15 +303,39 @@ function update(data) {
     newVal = +this.value;
     d3.select("#darkrate-max-value").text(newVal);
 
+    minTime = document.getElementById("time-min").value;
+    maxTime = document.getElementById("time-max").value;
+    minDark = +document.getElementById("dark-min").value;
+    maxDark = +document.getElementById("dark-max").value;
+    newDetector = document.getElementById("detector").value;
+    pointsize = +document.getElementById("pointsize").value;
+
     darkrate.transition()
       .duration(2000)
       .delay(500)
       .attr('r', function(d, i) {
-        point = d3.select(this)
-        if (+d.dark >= newVal) {
+        if ((minTime >= +d.date) || (+d.date >= maxTime) || (minDark >= +d.dark) || (+d.dark >= maxDark)) {
+          return 0;
+        } else if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (newDetector != d.detector) {
           return 0;
         }
-        return +document.getElementById("pointsize").value;
+        return pointsize;
+      });
+
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('r', function(d, i) {
+        if ((minTime >= +d.date) || (+d.date >= maxTime) || (minDark >= +d.dark) || (+d.dark >= maxDark)) {
+          return 0;
+        } else if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (newDetector != d.detector) {
+          return 0;
+        }
+        return pointsize;
       });
   });
 
@@ -209,95 +388,8 @@ function update(data) {
   canvas.exit().remove();
 }
 
-// Turn on all data
-d3.select("#ALL").on("click", function(d, i) {
-  darkrate.transition()
-    .duration(2000)
-    .delay(500)
-    .attr('r', +document.getElementById("pointsize").value);
-});
 
-// Select only NUV data.
-d3.select("#NUV").on("click", function(d, i) {
-  darkrate.transition()
-    .duration(2000)
-    .delay(500)
-    .attr('r', function(d, i) {
-      if (d.detector == "NUV") {
-        return +document.getElementById("pointsize").value;
-      }
-      return 0
-    });
-})
 
-// Select oinly FUVA data.
-d3.select("#FUVA").on("click", function(d, i) {
-  darkrate.transition()
-    .duration(2000)
-    .delay(500)
-    .attr('r', function(d, i) {
-      if (d.detector == "FUVA") {
-        return +document.getElementById("pointsize").value;
-      }
-      return 0
-    });
-})
-
-// Sekect only FUVB data.
-d3.select("#FUVB").on("click", function(d, i) {
-  darkrate.transition()
-    .duration(2000)
-    .delay(500)
-    .attr('r', function(d, i) {
-      if (d.detector == "FUVB") {
-        return +document.getElementById("pointsize").value;
-      }
-      return 0
-    });
-});
-
-// click to sub-solar coordinates
-d3.select("#relative").on("click", function() {
-  darkrate.transition()
-    .duration(2000)
-    .delay(500)
-    .attr("cx", function(d) {
-      return xScale(rescale(d))
-    })
-    .attr("cy", function(d) {
-      return yScale(d.latitude - d.sun_lat)
-    });
-
-  solar.transition()
-    .duration(2000)
-    .delay(500)
-    .attr("cx", xScale(0))
-    .attr("cy", yScale(0))
-})
-
-// click to default coordinates
-d3.select("#native").on("click", function() {
-  darkrate.transition()
-    .duration(2000)
-    .delay(500)
-    .attr("cx", function(d) {
-      return xScale(d.longitude);
-    })
-    .attr("cy", function(d) {
-      return yScale(d.latitude);
-    })
-
-  solar.transition()
-    .duration(2000)
-    .delay(500)
-    .attr("cx", function(d) {
-      return xScale(d.sun_lon);
-    })
-    .attr("cy", function(d) {
-      return yScale(d.sun_lat);
-    })
-
-})
 
 
 // Load the world.
@@ -330,8 +422,12 @@ d3.json("./js/orbital_info.json", function(error, data) {
 
     d.sun_lon = d.sun_lon > 180 ? +d.sun_lon - 360 : +d.sun_lon
     d.sun_lat = +d.sun_lat;
+
+    d.fsol = +d.fsol;
+
   });
 
+  console.log("running update")
   update(data);
 
 });
@@ -348,7 +444,7 @@ function rescale(d) {
 // Interactivity
 function mouseover(d, i) {
   box = document.getElementById("stats");
-  message = "Lat: " + d.latitude.toFixed(3) + "\n" + "Lon: " + d.longitude.toFixed(3) + "\n" + "Dark: " + d.dark.toExponential(2);
+  message = "Lat: " + d.latitude.toFixed(3) + "\n" + "Lon: " + d.longitude.toFixed(3) + "\n" + "Dark: " + d.dark.toExponential(2) + "Fsol: " + d.fsol.toFixed(3);
   box.value = message;
 
 };
