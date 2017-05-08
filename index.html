@@ -9,7 +9,7 @@
   <meta name="description" content="Analysis of HST/COS darkrates">
   <meta name="author" content="Justin Ely">
 
-  <title>Dark Rates for the Cosmic Origins Spectrograph</title>
+  <title>COS Dark-Rates and the Solar Cycle</title>
 
   <!-- Style sheets -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -18,13 +18,6 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:100,300,400,600,700,100italic,300italic,400italic,600italic,700italic" rel="stylesheet" type="text/css">
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-  <![endif]-->
 
 </head>
 
@@ -41,14 +34,23 @@
   <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
   <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
-  <div class="brand">HST/COS Darkrates</div>
-  <div class="address-bar">Understanding the dark rates and orbital position</div>
+  <div class="brand">COS Dark-Rates and the Solar Cycle</div>
+  <div class="address-bar">Understanding the influence of the sun on the instrumental dark-rates</div>
 
   <header>
     <div class="container">
       <div class="row">
-        <div class="col-lg-12 text-center">
-          <p>Hello darkness my old friend...</p>
+        <div class="col-sm-12 text-center">
+          <p>The dark-rate of the COS instrument has been observed to vary
+            significantly over its history.  These variations can affect
+            only certain detectors or all, and can be transient or long-term. 
+            This site facilitates exploration of the COS dark-rate in the hopes of 
+            shedding light on to some of the observed behavior.  The graphic below
+            shows COS dark-rate measurements at the latitude and longitude of their
+            observation, as well as where the sun was during the observation.  
+            Also associated with each point is a measure of the solar flux for that day. 
+            Through these measures, we hope we can understand this behavior better.
+          </p>
         </div>
       </div>
     </div>
@@ -61,8 +63,7 @@
       <div class="box">
         <div class="col-lg-12">
           <hr>
-          <h2 class="intro-text text-center">Tool
-            <strong>Bar</strong>
+          <h2 class="intro-text text-center"><strong>Customization</strong>
           </h2>
           <hr>
         </div>
@@ -80,7 +81,7 @@
               Lat/Long Coordinates
             </button>
             <button type="button" class="btn btn-primary" data-toggle="tooltip" title="Display coordinates relative to solar position." id="relative">
-              Relative
+              Relative to Sub-solar
             </button>
           </div>
         </center>
@@ -172,21 +173,6 @@
               <svg width="960" height="300" id="scatter"></svg>
             </center>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="container">
-      <div class="row">
-        <div class="box">
-          <div class="col-lg-12">
-            <hr>
-            <h2 class="intro-text text-center">More
-              <strong>Analysis</strong>
-            </h2>
-            <hr>
-          </div>
-          <div class="clearfix"></div>
         </div>
       </div>
     </div>
