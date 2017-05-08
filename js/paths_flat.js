@@ -18,7 +18,6 @@ var cScale = d3.scaleLinear()
 //    .attr("height", height);
 
 var svg = d3.select("#map")
-var scattersvg = d3.select("#scatter")
 
 var projection = d3.geoMercator()
   .scale((width - 3) / (2 * Math.PI))
