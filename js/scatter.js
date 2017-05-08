@@ -42,11 +42,11 @@ d3.json("./js/orbital_info.json", function(error, data) {
     d.fsol = +d.fsol
   });
 
-  update(data);
+  updateScatter(data);
 
 });
 
-function update(data) {
+function updateScatter(data) {
   x.domain(d3.extent(data, function(d) { return +d.date; })).nice();
   y.domain(d3.extent(data, function(d) { return +d.dark; })).nice();
   ySol.domain(d3.extent(data, function(d) { return +d.fsol; })).nice();
