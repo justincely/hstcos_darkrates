@@ -1,8 +1,5 @@
 var height = 960
 var width = 960
-//var margin = {top: 10, right: 10, bottom: 10, left: 10},
-//    width = 980 - margin.left - margin.right,
-//    height = 980 - margin.top - margin.bottom;
 
 var xScale = d3.scaleLinear()
   .domain([-180, 180])
@@ -15,10 +12,6 @@ var yScale = d3.scaleLinear()
 var cScale = d3.scaleLinear()
   .domain([1e-6, 4e-6])
   .range(['cyan', 'darkred'])
-
-//var svg = d3.select("body").select("div").append("svg")
-//    .attr("width", width)
-//    .attr("height", height);
 
 var svg = d3.select("#map")
 
@@ -51,6 +44,8 @@ svg.append("path")
   .attr("class", "graticule")
   .attr("d", path);
 
+
+// Set initial values in the browser
 d3.select("#time-min-value").text(document.getElementById("time-min").value)
 d3.select("#time-max-value").text(document.getElementById("time-max").value)
 d3.select("#darkrate-min-value").text(document.getElementById("dark-min").value)
@@ -63,11 +58,6 @@ d3.select("#sol-pointsize-value").text(document.getElementById("solPointsize").v
 
 
 function update(data) {
-  // Scale the range of the data
-  //cScale.domain(d3.extent(data, function(d) {
-  //  return d.dark;
-  //}));
-
   var canvas = svg.selectAll("circle")
     .data(data);
 
@@ -177,6 +167,7 @@ function update(data) {
 
     })
 
+  // Filter data on minimum time
   d3.select("#time-min").on("input", function(d, i) {
     newVal = +this.value;
     d3.select("#time-min-value").text(newVal);
@@ -219,6 +210,7 @@ function update(data) {
 
   });
 
+  // Filter data on maxmimum time
   d3.select("#time-max").on("input", function(d, i) {
     newVal = +this.value;
     d3.select("#time-max-value").text(newVal);
@@ -259,6 +251,7 @@ function update(data) {
       });
   });
 
+  // Filter data on minimum darkrate
   d3.select("#dark-min").on("input", function(d, i) {
     newVal = +this.value;
     d3.select("#darkrate-min-value").text(newVal);
@@ -299,6 +292,7 @@ function update(data) {
       });
   });
 
+  //Filter data on maximum darkrate
   d3.select("#dark-max").on("input", function(d, i) {
     newVal = +this.value;
     d3.select("#darkrate-max-value").text(newVal);
@@ -351,7 +345,7 @@ function update(data) {
       .style("opacity", +this.value)
   });
 
-  // Opacity selection
+  // Solar point opacity selection
   d3.select("#solOpacity").on("input", function(d, i) {
 
     d3.select("#sol-opacity-value").text(this.value);
@@ -374,7 +368,7 @@ function update(data) {
       .attr("r", +this.value)
   });
 
-  // Change size of the points
+  // Change size of the solar points
   d3.select("#solPointsize").on("input", function(d, i) {
 
     d3.select("#sol-pointsize-value").text(this.value);
@@ -425,7 +419,6 @@ d3.json("./js/orbital_info.json", function(error, data) {
 
   });
 
-  console.log("running update")
   update(data);
 
 });
@@ -439,7 +432,7 @@ function rescale(d) {
 }
 
 
-// Interactivity
+// Interactivity section
 function mouseover(d, i) {
   box = document.getElementById("stats");
   message = "Lat: " + d.latitude.toFixed(3) + "\n" + "Lon: " + d.longitude.toFixed(3) + "\n" + "Dark: " + d.dark.toExponential(2) + "\nFsol: " + d.fsol.toFixed(3);
