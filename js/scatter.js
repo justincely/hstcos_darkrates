@@ -1,34 +1,39 @@
-var margin = {top: 20, right: 20, bottom: 30, left: 60},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+var margin = {
+    top: 20,
+    right: 20,
+    bottom: 30,
+    left: 60
+  },
+  width = 960 - margin.left - margin.right,
+  height = 500 - margin.top - margin.bottom;
 
 var x = d3.scaleLinear()
-    .range([0, width]);
+  .range([0, width]);
 
 var y = d3.scaleLinear()
-    .range([height, 0]);
+  .range([height, 0]);
 
 var ySol = d3.scaleLinear()
-    .range([height, 0]);
+  .range([height, 0]);
 
 var color = d3.scaleLinear()
   .domain([0, 5e-6])
   .range(['cyan', 'darkred'])
 
 var scattersvg = d3.select("#scatter")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
   .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var xAxis = d3.axisBottom()
-    .scale(x);
+  .scale(x);
 
 var yAxis = d3.axisLeft()
-    .scale(y);
+  .scale(y);
 
 var ySolAxis = d3.axisRight()
-    .scale(ySol);
+  .scale(ySol);
 
 // Load the orbital info stuff
 d3.json("./js/orbital_info.json", function(error, data) {
@@ -47,61 +52,77 @@ d3.json("./js/orbital_info.json", function(error, data) {
 });
 
 function updateScatter(data) {
-  x.domain(d3.extent(data, function(d) { return +d.date; })).nice();
-  y.domain(d3.extent(data, function(d) { return +d.dark; })).nice();
-  ySol.domain(d3.extent(data, function(d) { return +d.fsol; })).nice();
+  x.domain(d3.extent(data, function(d) {
+    return +d.date;
+  })).nice();
+  y.domain(d3.extent(data, function(d) {
+    return +d.dark;
+  })).nice();
+  ySol.domain(d3.extent(data, function(d) {
+    return +d.fsol;
+  })).nice();
 
   scattersvg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
     .append("text")
-      .attr("class", "label")
-      .attr("x", width)
-      .attr("y", -6)
-      .attr("fill", "black")
-      .style("text-anchor", "end")
-      .text("Decimal Year (year)");
+    .attr("class", "label")
+    .attr("x", width)
+    .attr("y", -6)
+    .attr("fill", "black")
+    .style("text-anchor", "end")
+    .text("Decimal Year (year)");
 
   scattersvg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
+    .attr("class", "y axis")
+    .call(yAxis)
     .append("text")
-      .attr("class", "label")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .attr("fill", "black")
-      .style("text-anchor", "end")
-      .text("Dark Rate")
+    .attr("class", "label")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .attr("fill", "black")
+    .style("text-anchor", "end")
+    .text("Dark Rate")
 
   scattersvg.append("g")
-      .attr("class", "y axis")
-      .call(ySolAxis)
+    .attr("class", "y axis")
+    .call(ySolAxis)
     .append("text")
-      .attr("class", "label")
-      .attr("transform", "translate(35, 0)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .attr("fill", "orange")
-      .style("text-anchor", "end")
-      .text("F10.7")
+    .attr("class", "label")
+    .attr("transform", "translate(35, 0)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .attr("fill", "orange")
+    .style("text-anchor", "end")
+    .text("F10.7")
 
   scattersvg.append("g").selectAll(".dot")
-      .data(data)
+    .data(data)
     .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 3.5)
-      .attr("cx", function(d) { return x(+d.date); })
-      .attr("cy", function(d) { return y(+d.dark); })
-      .style("fill", function(d) { return color(+d.dark); });
+    .attr("class", "dot")
+    .attr("r", 3.5)
+    .attr("cx", function(d) {
+      return x(+d.date);
+    })
+    .attr("cy", function(d) {
+      return y(+d.dark);
+    })
+    .style("fill", function(d) {
+      return color(+d.dark);
+    });
 
-    scattersvg.append("g").selectAll("circle")
-          .data(data)
-        .enter().append("circle")
-          .attr("r", 3.5)
-          .attr("cx", function(d) { return x(+d.date); })
-          .attr("cy", function(d) { return ySol(+d.fsol); })
-          .style("fill", "orange");
+  scattersvg.append("g").selectAll("circle")
+    .data(data)
+    .enter().append("circle")
+    .attr("r", 3.5)
+    .attr("cx", function(d) {
+      return x(+d.date);
+    })
+    .attr("cy", function(d) {
+      return ySol(+d.fsol);
+    })
+    .style("fill", "orange");
 
 
 };
@@ -128,4 +149,4 @@ d3.select("#detector").on("click", function(d, i) {
       }
       return 0
     })
-  });
+});

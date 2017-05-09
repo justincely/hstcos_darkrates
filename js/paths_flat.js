@@ -92,80 +92,80 @@ function update(data) {
     })
     .merge(canvas);
 
-    // Select only specific detector data.
-    d3.select("#detector").on("input", function(d, i) {
+  // Select only specific detector data.
+  d3.select("#detector").on("input", function(d, i) {
 
-      console.log("here");
-      newDetector = document.getElementById("detector").value;
-      pointsize = +document.getElementById("pointsize").value;
+    console.log("here");
+    newDetector = document.getElementById("detector").value;
+    pointsize = +document.getElementById("pointsize").value;
 
-      darkrate.transition()
-        .duration(2000)
-        .delay(500)
-        .attr('r', function(d, i) {
-          if (newDetector == "BOTH") {
-            return pointsize;
-          } else if (d.detector == newDetector) {
-            return pointsize;
-          }
-          return 0
-        });
+    darkrate.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('r', function(d, i) {
+        if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (d.detector == newDetector) {
+          return pointsize;
+        }
+        return 0
+      });
 
-      solar.transition()
-        .duration(2000)
-        .delay(500)
-        .attr('r', function(d, i) {
-          if (newDetector == "BOTH") {
-            return pointsize;
-          } else if (d.detector == newDetector) {
-            return pointsize;
-          }
-          return 0
-        });
-    })
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr('r', function(d, i) {
+        if (newDetector == "BOTH") {
+          return pointsize;
+        } else if (d.detector == newDetector) {
+          return pointsize;
+        }
+        return 0
+      });
+  })
 
-    // click to sub-solar coordinates
-    d3.select("#relative").on("click", function() {
-      darkrate.transition()
-        .duration(2000)
-        .delay(500)
-        .attr("cx", function(d) {
-          return xScale(rescale(d))
-        })
-        .attr("cy", function(d) {
-          return yScale(d.latitude - d.sun_lat)
-        });
+  // click to sub-solar coordinates
+  d3.select("#relative").on("click", function() {
+    darkrate.transition()
+      .duration(2000)
+      .delay(500)
+      .attr("cx", function(d) {
+        return xScale(rescale(d))
+      })
+      .attr("cy", function(d) {
+        return yScale(d.latitude - d.sun_lat)
+      });
 
-      solar.transition()
-        .duration(2000)
-        .delay(500)
-        .attr("cx", xScale(0))
-        .attr("cy", yScale(0))
-    })
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr("cx", xScale(0))
+      .attr("cy", yScale(0))
+  })
 
-    // click to default coordinates
-    d3.select("#native").on("click", function() {
-      darkrate.transition()
-        .duration(2000)
-        .delay(500)
-        .attr("cx", function(d) {
-          return xScale(d.longitude);
-        })
-        .attr("cy", function(d) {
-          return yScale(d.latitude);
-        })
+  // click to default coordinates
+  d3.select("#native").on("click", function() {
+    darkrate.transition()
+      .duration(2000)
+      .delay(500)
+      .attr("cx", function(d) {
+        return xScale(d.longitude);
+      })
+      .attr("cy", function(d) {
+        return yScale(d.latitude);
+      })
 
-      solar.transition()
-        .duration(2000)
-        .delay(500)
-        .attr("cx", function(d) {
-          return xScale(d.sun_lon);
-        })
-        .attr("cy", function(d) {
-          return yScale(d.sun_lat);
-        })
+    solar.transition()
+      .duration(2000)
+      .delay(500)
+      .attr("cx", function(d) {
+        return xScale(d.sun_lon);
+      })
+      .attr("cy", function(d) {
+        return yScale(d.sun_lat);
+      })
 
-    })
+  })
 
   // Filter data on minimum time
   d3.select("#time-min").on("input", function(d, i) {
